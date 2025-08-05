@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     // dagger hilt
     alias(libs.plugins.dagger.hilt.android)
@@ -8,19 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.helloumi.contactapplication"
+    namespace = "com.helloumi.domain"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.helloumi.contactapplication"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 17
-        versionName = "1.0"
-
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -32,7 +24,6 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -43,11 +34,22 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui"))
-    implementation(project(":domain"))
-    implementation(project(":data"))
-
     // Dagger Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // Json
+    implementation(libs.moshi)
+    implementation(libs.moshi.adapters)
+    implementation(libs.moshi.kotlin)
+    ksp(libs.moshi.kotlin.codegen)
+    implementation(libs.converter.moshi)
+
+    // Testing
+    implementation(libs.junit.ktx)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.mockk)
 }
