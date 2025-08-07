@@ -19,12 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.helloumi.domain.model.ContactDomain
+import com.helloumi.ui.R
 import com.helloumi.ui.theme.Dimens
 import com.helloumi.ui.theme.Dimens.CONTACT_ITEM_ELEVATION
 import com.helloumi.ui.theme.Dimens.CONTACT_ITEM_IMAGE_SIZE
@@ -32,7 +34,6 @@ import com.helloumi.ui.theme.Dimens.CONTACT_ITEM_ROUNDED_SHAPE
 import com.helloumi.ui.theme.Dimens.STACK_MD
 import com.helloumi.ui.theme.Dimens.STACK_XXS
 import com.helloumi.ui.theme.PINK_80
-import com.helloumi.ui.theme.PURPLE_GREY_40
 
 @Composable
 fun ContactItem(
@@ -59,6 +60,7 @@ fun ContactItem(
             // Contact Picture
             AsyncImage(
                 model = contact.picture,
+                error = painterResource(R.drawable.contact_place_holder),
                 contentDescription = "Contact picture",
                 modifier = Modifier
                     .size(CONTACT_ITEM_IMAGE_SIZE)

@@ -9,7 +9,7 @@
     <string name="phone">Phone</string>
     <string name="address">Address</string>
 
-    <string name="reconnected_message">">Connection restored. Data updated.</string>
+    <string name="reconnected_message">"Connection restored. Data updated.</string>
     <string name="disconnected_message">Offline mode enabled. Data loaded locally.</string>
 
 </resources>

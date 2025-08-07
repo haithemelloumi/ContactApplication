@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,7 +38,7 @@ class ContactsViewModel @Inject constructor(
 
     fun observeInternetStatus() {
         viewModelScope.launch(dispatcherProvider.io) {
-            networkMonitor.isOnline.collectLatest { isOnline ->
+            networkMonitor.isOnline.distinctUntilChanged().collectLatest { isOnline ->
                 val wasOnline = _uiState.value.isInternetAvailable
                 _uiState.update { it.copy(isInternetAvailable = isOnline) }
                 if (isOnline) {
@@ -45,13 +46,11 @@ class ContactsViewModel @Inject constructor(
                     if (!wasOnline) {
                         // Reconnected after a period of offline time
                         _effect.send(ContactsEffect.ShowReconnectedMessage)
-                        println("xxxxxxxxxxxxxx connexion retrouvée.")
                     }
                 } else if (wasOnline) {
                     // Disconnected after a period of online time
                     loadLocalContacts()
                     _effect.send(ContactsEffect.ShowDisconnectedMessage)
-                    println("Mode hors ligne activé")
                 }
             }
         }
