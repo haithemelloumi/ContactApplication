@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="settings_toolbar_padding">4dp</dimen>
+    <dimen name="text_toolbar_size">15sp</dimen>
+    <dimen name="spacing_small">16dp</dimen>
+    <dimen name="spacing_medium">24dp</dimen>
+    <dimen name="button_radius_corner">8dp</dimen>
+
+</resources>
