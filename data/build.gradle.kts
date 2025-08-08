@@ -18,15 +18,6 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "BASE_URL", "\"\"")
-        }
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            buildConfigField("String", "BASE_URL", "\"\"")
         }
     }
     compileOptions {
@@ -60,6 +51,8 @@ dependencies {
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
     implementation(libs.converter.moshi)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     api(libs.gson)
 
     // Testing

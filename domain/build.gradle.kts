@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.dagger.hilt.android)
     // ksp
     alias(libs.plugins.devtools.ksp)
+    // parcelize
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
