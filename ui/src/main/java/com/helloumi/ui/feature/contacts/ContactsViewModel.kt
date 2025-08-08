@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
@@ -47,10 +48,12 @@ class ContactsViewModel @Inject constructor(
                         // Reconnected after a period of offline time
                         _effect.send(ContactsEffect.ShowReconnectedMessage)
                     }
-                } else if (wasOnline) {
-                    // Disconnected after a period of online time
+                } else {
                     loadLocalContacts()
-                    _effect.send(ContactsEffect.ShowDisconnectedMessage)
+                    if (wasOnline) {
+                        // Disconnected after a period of online time
+                        _effect.send(ContactsEffect.ShowDisconnectedMessage)
+                    }
                 }
             }
         }
@@ -83,7 +86,8 @@ class ContactsViewModel @Inject constructor(
 
     // Called for first page
     suspend fun loadContacts() {
-        _uiState.update { it.copy(isLoadingContacts = true) }
+        // Reset contact list and page when loading contacts from API
+        _uiState.update { it.copy(isLoadingContacts = true, contacts = emptyList(), currentPage = INITIAL_PAGE) }
 
         getContactsUseCase(INITIAL_PAGE, RESULT_SIZE).collectLatest { result ->
             when (result) {
@@ -93,6 +97,7 @@ class ContactsViewModel @Inject constructor(
                         it.copy(
                             isLoadingContacts = false,
                             contacts = newContacts,
+                            currentPage = INITIAL_PAGE
                         )
                     }
                 }
@@ -103,6 +108,7 @@ class ContactsViewModel @Inject constructor(
                         it.copy(
                             isLoadingContacts = false,
                             contacts = newContacts,
+                            currentPage = INITIAL_PAGE
                         )
                     }
                 }
@@ -154,14 +160,21 @@ class ContactsViewModel @Inject constructor(
 
     private fun loadLocalContacts() {
         viewModelScope.launch(dispatcherProvider.io) {
-            getLocalContactsUseCase().collectLatest { localContacts ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingContacts = false,
-                        contacts = localContacts,
-                        currentPage = INITIAL_PAGE
-                    )
+            try {
+                val localContacts = getLocalContactsUseCase().first()
+                // Only update if we're still offline
+                if (!_uiState.value.isInternetAvailable) {
+                    _uiState.update {
+                        it.copy(
+                            isLoadingContacts = false,
+                            contacts = localContacts,
+                            currentPage = INITIAL_PAGE
+                        )
+                    }
                 }
+            } catch (e: Exception) {
+                // Handle any errors
+                println("Error loading local contacts: ${e.message}")
             }
         }
     }
