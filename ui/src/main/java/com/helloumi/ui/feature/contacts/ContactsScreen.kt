@@ -36,6 +36,8 @@ import com.helloumi.ui.feature.contacts.ContactsViewModel.Companion.PREFETCH_DIS
 import com.helloumi.ui.theme.Dimens
 import com.helloumi.ui.theme.PURPLE_40
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun ContactsScreen(
@@ -46,6 +48,9 @@ fun ContactsScreen(
     // Collect State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
+    
+    // Track if initial data has been loaded to prevent reloading on rotation
+    val hasInitialDataLoaded = rememberSaveable { mutableStateOf(false) }
 
     val reconnectedMessage = stringResource(R.string.reconnected_message)
     val disconnectedMessage = stringResource(R.string.disconnected_message)
@@ -75,9 +80,12 @@ fun ContactsScreen(
         }
     }
 
-    // Send initial intent to load data
+    // Send initial intent to load data only once
     LaunchedEffect(Unit) {
-        viewModel.processIntent(ContactsIntent.LoadInitialData)
+        if (!hasInitialDataLoaded.value) {
+            viewModel.processIntent(ContactsIntent.LoadInitialData)
+            hasInitialDataLoaded.value = true
+        }
     }
 
     // Manage intents (contactTapped and loadMoreContacts)
